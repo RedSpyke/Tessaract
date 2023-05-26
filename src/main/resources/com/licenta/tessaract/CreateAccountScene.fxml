@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="CreateAccountPane" maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0"
+            xmlns="http://javafx.com/javafx/19" fx:controller="com.licenta.tessaract.FxController">
+    <children>
+        <PasswordField fx:id="newAccountPassword" alignment="CENTER" layoutX="126.0" layoutY="226.0"
+                       promptText="Password"/>
+        <Button fx:id="createNewAccountButton" layoutX="152.0" layoutY="289.0" mnemonicParsing="false"
+                onAction="#onCreateNewAccountButtonClicked" text="Create Account"/>
+        <TextField fx:id="newEmailAddress" alignment="CENTER" layoutX="127.0" layoutY="175.0"
+                   promptText="Email Address "/>
+        <TextField fx:id="newUserName" alignment="CENTER" layoutX="127.0" layoutY="126.0" promptText="User Name"/>
+        <Label fx:id="userDetails" alignment="CENTER" contentDisplay="CENTER" layoutX="37.0" layoutY="344.0"
+               prefHeight="17.0" prefWidth="334.0"/>
+    </children>
+</AnchorPane>

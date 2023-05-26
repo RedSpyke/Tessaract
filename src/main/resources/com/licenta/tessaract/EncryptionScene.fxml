@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
+   <children>
+      <TextField fx:id="numeDocument" layoutX="44.0" layoutY="175.0" prefHeight="25.0" prefWidth="313.0" promptText="Nume document" />
+      <Button fx:id="CriptareDocumentButton" layoutX="169.0" layoutY="280.0" mnemonicParsing="false" onAction="#encryptButton" text="Cripteaza" />
+      <Button fx:id="adaugaDocumentButton" layoutX="44.0" layoutY="123.0" mnemonicParsing="false" onAction="#addDocumentButton" text="Adauga document " />
+      <Label layoutX="160.0" layoutY="53.0" text="Modul Criptare" />
+      <Label fx:id="encryptionStatusLabel" layoutX="69.0" layoutY="348.0" prefHeight="17.0" prefWidth="265.0" />
+      <TextField fx:id="parolaCheie" layoutX="44.0" layoutY="219.0" prefHeight="25.0" prefWidth="313.0" promptText="Parola cheie" />
+   </children>
+</AnchorPane>
