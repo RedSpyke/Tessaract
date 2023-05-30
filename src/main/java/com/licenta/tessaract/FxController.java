@@ -4,6 +4,7 @@ import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -17,6 +18,7 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -24,17 +26,24 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 // TO DO Validare metode
 
-public class FxController {
+public class FxController implements Initializable {
 
-
+    @Override
+    public void initialize(URL args0, ResourceBundle args1) {
+        comboBoxCheie.getItems().addAll(dimensiuniCheie);
+    }
 
     // Data fields
+    private final String[] dimensiuniCheie = {"128", "192", "256"};
     private String selectedFilePath;
 
     // FXML data fields
+    @FXML
+    public ComboBox <String> comboBoxCheie = new ComboBox<>();
     @FXML
     public TextField parolaCheie;
     @FXML
@@ -76,6 +85,8 @@ public class FxController {
     private PasswordField passwordField;
     @FXML
     private TextField emailField;
+
+
 
     @FXML
     protected void onLogInButtonClicked(ActionEvent event) throws IOException {
@@ -136,7 +147,7 @@ public class FxController {
             }
     }
 
-    // Method to add a file in the encryption scene when adaugaDocumentButton is clicked (TO DO)    EncryptionScene.fxml -> adaugaDocumentButton
+    // Method to add a file in the encryption scene when adauga DocumentButton is clicked (TO DO)    EncryptionScene.fxml -> adaugaDocumentButton
     @FXML
     private void addDocumentButton() {
         FileChooser fileChooser = new FileChooser();
@@ -335,4 +346,6 @@ public class FxController {
         stage.setScene(scene);
         stage.show();
     }
+
+
 }

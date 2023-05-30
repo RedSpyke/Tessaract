@@ -15,6 +15,10 @@ public class TessaractApplication extends Application {
         launch();
     }
 
+    // TO DO: Hash of encrypted files
+    //
+
+
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(TessaractApplication.class.getResource("StartApplicationScene.fxml"));
