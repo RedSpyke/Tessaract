@@ -11,9 +11,9 @@
 <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="450.0" stylesheets="@styleScenes.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
    <children>
       <TextField fx:id="numeDocument" layoutX="50.0" layoutY="176.0" prefHeight="25.0" prefWidth="340.0" promptText="Nume document" />
-      <Button fx:id="CriptareDocumentButton" layoutX="187.0" layoutY="524.0" mnemonicParsing="false" onAction="#encryptButton" text="Cripteaza" />
+      <Button fx:id="CriptareDocumentButton" layoutX="50.0" layoutY="524.0" mnemonicParsing="false" onAction="#encryptButton" text="Cripteaza" />
       <Button fx:id="adaugaDocumentButton" layoutX="50.0" layoutY="123.0" mnemonicParsing="false" onAction="#addDocumentButton" text="Adauga document " />
-      <Label layoutX="179.0" layoutY="65.0" text="Modul Criptare" />
+      <Label fx:id="titluCriptareScene" layoutX="141.0" layoutY="55.0" text="Modul Criptare" />
       <Label fx:id="encryptionStatusLabel" layoutX="30.0" layoutY="494.0" prefHeight="17.0" prefWidth="394.0" />
       <TextField fx:id="parolaCheie" layoutX="50.0" layoutY="217.0" prefHeight="25.0" prefWidth="340.0" promptText="Parola cheie" />
       <RadioButton layoutX="50.0" layoutY="292.0" mnemonicParsing="false" text="AES">
@@ -22,8 +22,9 @@
          </toggleGroup>
       </RadioButton>
       <RadioButton layoutX="179.0" layoutY="292.0" mnemonicParsing="false" text="Blowfish" toggleGroup="$algoritm" />
-      <RadioButton layoutX="303.0" layoutY="292.0" mnemonicParsing="false" text="RadioButton" toggleGroup="$algoritm" />
+      <RadioButton layoutX="280.0" layoutY="290.0" mnemonicParsing="false" text="RadioButton" toggleGroup="$algoritm" />
       <Label layoutX="50.0" layoutY="257.0" text="Alege algoritmul de criptare" />
       <ComboBox fx:id="comboBoxCheie" layoutX="50.0" layoutY="355.0" prefHeight="25.0" prefWidth="169.0" promptText="Alege dimensiune cheie" />
+      <Button fx:id="butonBack" layoutX="247.0" layoutY="524.0" mnemonicParsing="false" onAction="#switchMainApplicationScene" text="Alege operatiune" />
    </children>
 </AnchorPane>

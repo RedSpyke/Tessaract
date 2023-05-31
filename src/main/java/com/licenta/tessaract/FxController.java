@@ -321,27 +321,25 @@ public class FxController implements Initializable {
         stage.setScene(scene);
         stage.show();
     }
-
+    @FXML
     private void switchEncryptScene(ActionEvent event) throws IOException {
         switchScene("EncryptionScene.fxml", event);
     }
-
+    @FXML
     private void switchDecryptScene(ActionEvent event) throws IOException {
         switchScene("DecryptionScene.fxml", event);
     }
-
+    @FXML
     private void switchMainApplicationScene(ActionEvent event) throws IOException {
         switchScene("MainApplicationScene.fxml", event);
     }
-
+    @FXML
     private void switchCreateAccountScene(ActionEvent event) throws IOException {
         switchScene("CreateAccountScene.fxml", event);
     }
-
+    @FXML
     private void switchStartApplicationScene(ActionEvent event) throws IOException {
         switchScene("StartApplicationScene.fxml", event);
     }
-
-
 
 }

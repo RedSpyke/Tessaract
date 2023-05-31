@@ -1,21 +1,23 @@
-/* styleStartApplicationScene.css */
 
-/* Customize the anchorPane */
 .root {
-    -fx-background-color: #CAE9FF;
+    -fx-background-color: #282828 ;
 }
 
-/* Customize the labels */
+AnchorPane {
+    -fx-background-color: #282828;
+     -fx-font-family: "Roboto Mono", sans-serif;
+     -fx-font-style: normal;
+}
+
  Label {
     -fx-font-size: 14px;
-    -fx-text-fill: #1B4965;
+    -fx-text-fill: #F4EBD0;
 }
 
-/* Customize the buttons */
 Button {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-background-color: #5FA8D3; /* Added '#' before color code */
+    -fx-background-color: f6bd60;
 }
 
 Button:hover {
@@ -23,23 +25,28 @@ Button:hover {
 }
 
  Button:pressed {
-    -fx-background-color: #f8f9fa; /* Added '#' before color code */
-    -fx-text-fill: #343a40; /* Added '#' before color code */
+    -fx-background-color: #f8f9fa;
+    -fx-text-fill: #343a40;
 }
 
-/* Customize the password field */
  PasswordField {
     -fx-font-size: 14px;
     -fx-background-color: #ffffff;
 }
 
-/* Customize the text field */
-Scene TextField {
+TextField {
     -fx-font-size: 14px;
     -fx-background-color: #ffffff;
 }
 
-#numeAplicatie {
+#numeAplicatie, #titluCriptareScene, #titluDecriptareScene {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
+   -fx-text-fill: #d6ad60;
 }
+RadioButton {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #d6ad60;
+}
+

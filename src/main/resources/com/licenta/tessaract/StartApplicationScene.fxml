@@ -1,25 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="StartApplicationScene" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
+<AnchorPane fx:id="StartApplicationScene" maxHeight="400.0" maxWidth="700.0" minHeight="400.0" minWidth="700.0" prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
     <children>
-        <Label fx:id="loginResultText" layoutX="50.0" layoutY="112.0" prefHeight="20.0" prefWidth="290.0" />
-        <Button fx:id="LogInButton" layoutX="57.0" layoutY="317.0" mnemonicParsing="false" onAction="#onLogInButtonClicked" text="Autentificare" />
-        <Button fx:id="CreateAccountPane" layoutX="243.0" layoutY="317.0" mnemonicParsing="false" onAction="#onCreateAccountButtonClicked" text="Creare Cont" />
-        <PasswordField fx:id="passwordField" alignment="CENTER" layoutX="52.0" layoutY="241.0" promptText="parola" />
-        <TextField fx:id="emailField" alignment="CENTER" layoutX="50.0" layoutY="175.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="adresa de mail" />
-      <Label layoutX="50.0" layoutY="147.0" text="Introduce adresa de email" />
-      <Label layoutX="52.0" layoutY="209.0" text="Introduce parola" />
-      <Label fx:id="numeAplicatie" layoutX="156.0" layoutY="60.0" text="TESSARCT">
+        <Label fx:id="loginResultText" layoutX="45.0" layoutY="297.0" prefHeight="20.0" prefWidth="201.0" />
+        <Button fx:id="LogInButton" layoutX="45.0" layoutY="330.0" mnemonicParsing="false" onAction="#onLogInButtonClicked" text="Autentificare" />
+        <Button fx:id="CreateAccountPane" layoutX="165.0" layoutY="330.0" mnemonicParsing="false" onAction="#onCreateAccountButtonClicked" text="Creare Cont" />
+        <PasswordField fx:id="passwordField" alignment="CENTER" layoutX="67.0" layoutY="239.0" promptText="parola" />
+        <TextField fx:id="emailField" alignment="CENTER" layoutX="67.0" layoutY="175.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="adresa de mail" />
+      <Label layoutX="67.0" layoutY="147.0" text="Introduce adresa de email" />
+      <Label layoutX="67.0" layoutY="214.0" text="Introduce parola" />
+      <Label fx:id="numeAplicatie" layoutX="97.0" layoutY="60.0" text="TESSARCT">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
+      <ImageView fitHeight="421.0" fitWidth="427.0" layoutX="290.0" layoutY="-12.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="-9.0" AnchorPane.leftAnchor="290.0" AnchorPane.rightAnchor="-17.0" AnchorPane.topAnchor="-12.0">
+         <image>
+            <Image url="@LogoMain.png" />
+         </image>
+         <viewport>
+            <Rectangle2D />
+         </viewport>
+      </ImageView>
     </children>
 </AnchorPane>

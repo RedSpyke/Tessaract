@@ -22,17 +22,13 @@ public class TessaractApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(TessaractApplication.class.getResource("StartApplicationScene.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 400, 400);
+        Scene scene = new Scene(fxmlLoader.load(), 700, 400);
         stage.setTitle("Tessaract");
+        stage.setResizable(false);
         stage.setScene(scene);
-        stage.getIcons().add(new Image("D:\\Drive\\Licenta UTM\\Tesseract\\Tessaract\\src\\main\\resources\\img\\LogoMain.png"));
+        stage.getIcons().add(new Image("D:\\Drive\\Licenta UTM\\Tesseract\\Tessaract\\src\\main\\resources\\com\\licenta\\tessaract\\LogoMain.png"));
         String css = Objects.requireNonNull(getClass().getResource("/com/licenta/tessaract/styleScenes.css")).toExternalForm();
         scene.getStylesheets().add(css);
         stage.show();
     }
-
-
-
-
-
 }
