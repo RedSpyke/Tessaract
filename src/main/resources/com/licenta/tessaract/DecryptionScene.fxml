@@ -5,7 +5,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" stylesheets="@styleScenes.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
    <children>
       <Label layoutX="154.0" layoutY="56.0" text="Modul Decriptare" />
       <Button fx:id="adaugaDocumentButton" layoutX="54.0" layoutY="104.0" mnemonicParsing="false" onAction="#addDocumentButton" text="Adauga document " />

@@ -32,6 +32,14 @@ import java.util.ResourceBundle;
 
 public class FxController implements Initializable {
 
+    private Stage stage = new Stage();
+
+    // Setter method for the stage property
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+
     @Override
     public void initialize(URL args0, ResourceBundle args1) {
         comboBoxCheie.getItems().addAll(dimensiuniCheie);
@@ -75,7 +83,7 @@ public class FxController implements Initializable {
     private TextField newEmailAddress;
     @FXML
     private TextField newUserName;
-    private Stage stage;
+
     private Scene scene;
     @FXML
     private Label loginResultText;
@@ -306,46 +314,34 @@ public class FxController implements Initializable {
         }
     }
 
-
-
-    private void switchEncryptScene(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("EncryptionScene.fxml")));
+    private void switchScene(String fxmlFileName, ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(fxmlFileName)));
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
+
+    private void switchEncryptScene(ActionEvent event) throws IOException {
+        switchScene("EncryptionScene.fxml", event);
+    }
+
     private void switchDecryptScene(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("DecryptionScene.fxml")));
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        switchScene("DecryptionScene.fxml", event);
     }
 
     private void switchMainApplicationScene(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainApplicationScene.fxml")));
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        switchScene("MainApplicationScene.fxml", event);
     }
 
     private void switchCreateAccountScene(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("CreateAccountScene.fxml")));
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        switchScene("CreateAccountScene.fxml", event);
     }
 
     private void switchStartApplicationScene(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("StartApplicationScene.fxml")));
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        switchScene("StartApplicationScene.fxml", event);
     }
+
 
 
 }

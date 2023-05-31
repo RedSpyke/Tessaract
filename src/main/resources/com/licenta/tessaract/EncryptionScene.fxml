@@ -8,7 +8,7 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="450.0" stylesheets="@styleScenes.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
    <children>
       <TextField fx:id="numeDocument" layoutX="50.0" layoutY="176.0" prefHeight="25.0" prefWidth="340.0" promptText="Nume document" />
       <Button fx:id="CriptareDocumentButton" layoutX="187.0" layoutY="524.0" mnemonicParsing="false" onAction="#encryptButton" text="Cripteaza" />

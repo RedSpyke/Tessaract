@@ -26,7 +26,7 @@ public class TessaractApplication extends Application {
         stage.setTitle("Tessaract");
         stage.setScene(scene);
         stage.getIcons().add(new Image("D:\\Drive\\Licenta UTM\\Tesseract\\Tessaract\\src\\main\\resources\\img\\LogoMain.png"));
-        String css = Objects.requireNonNull(getClass().getResource("/CSS/styleStartApplicationScene.css")).toExternalForm();
+        String css = Objects.requireNonNull(getClass().getResource("/com/licenta/tessaract/styleScenes.css")).toExternalForm();
         scene.getStylesheets().add(css);
         stage.show();
     }

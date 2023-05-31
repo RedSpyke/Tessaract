@@ -1,45 +1,45 @@
 /* styleStartApplicationScene.css */
 
 /* Customize the anchorPane */
-#StartApplicationScene {
+.root {
     -fx-background-color: #CAE9FF;
 }
 
 /* Customize the labels */
-#StartApplicationScene Label {
+ Label {
     -fx-font-size: 14px;
     -fx-text-fill: #1B4965;
 }
 
 /* Customize the buttons */
-#StartApplicationScene Button {
+Button {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-background-color: 5FA8D3;
+    -fx-background-color: #5FA8D3; /* Added '#' before color code */
 }
 
-#StartApplicationScene Button:hover {
-
+Button:hover {
     -fx-text-fill: #000000;
 }
 
-#StartApplicationScene Button:pressed {
-    -fx-background-color: f8f9fa;
-    -fx-text-fill: 343a40;
+ Button:pressed {
+    -fx-background-color: #f8f9fa; /* Added '#' before color code */
+    -fx-text-fill: #343a40; /* Added '#' before color code */
 }
 
 /* Customize the password field */
-#StartApplicationScene PasswordField {
+ PasswordField {
     -fx-font-size: 14px;
     -fx-background-color: #ffffff;
 }
 
 /* Customize the text field */
-#StartApplicationScene TextField {
+Scene TextField {
     -fx-font-size: 14px;
     -fx-background-color: #ffffff;
 }
-#StartApplicationScene #numeAplicatie {
+
+#numeAplicatie {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
 }
