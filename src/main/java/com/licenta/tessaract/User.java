@@ -35,36 +35,36 @@ public class User {
 
     }
 
-    public static boolean isValidEmail(String email) {
+    protected static boolean isValidEmail(String email) {
         if (email == null) {
-            throw new IllegalArgumentException("Email cannot be null");
+            return false;
         } else if (email.isEmpty()) {
-            throw new IllegalArgumentException("Email cannot be empty");
-        } else {
-            String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
-            Pattern pattern = Pattern.compile(emailRegex);
-            Matcher matcher = pattern.matcher(email);
-            return matcher.matches();
-        }
+            return false;
+        } else return emailPattern(email);
     }
 
-    public static boolean validatePassword(String password) {
+    protected static boolean emailPattern(String email) {
+        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
+    protected static boolean validatePassword(String password) {
         if (password == null) {
-            throw new IllegalArgumentException("Password cannot be null");
-        }
-        // Password must be at least 12 characters long
-        if (password.length() < 12) {
-            throw new IllegalArgumentException("Password must be at least 12 characters long");
-        }
-        // Password must have at least one uppercase letter, one lowercase letter, a symbol and a number
+            // Password cannot be null
+            return false;
+        } else  if (password.length() < 12) {
+            // Password must be at least 12 characters long
+            return false;
+        } else return passwordPattern(password);
+    }
+
+    private static boolean passwordPattern(String password){
         String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{12,}$";
         Pattern regex = Pattern.compile(pattern);
         Matcher matcher = regex.matcher(password);
-
-        if (!matcher.matches()) {
-            throw new IllegalArgumentException("Password must have at least one uppercase letter, one lowercase letter, a symbol and a number");
-        }
-        return true;
+        return matcher.matches();
     }
 
     private void addHashPasswordToList() {

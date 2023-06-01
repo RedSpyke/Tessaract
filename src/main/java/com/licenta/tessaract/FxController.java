@@ -28,16 +28,15 @@ import java.util.Base64;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+
+
 // TO DO Validare metode
 
 public class FxController implements Initializable {
 
     private Stage stage = new Stage();
 
-    // Setter method for the stage property
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
+
 
 
     @Override
@@ -46,7 +45,7 @@ public class FxController implements Initializable {
     }
 
     // Data fields
-    private final String[] dimensiuniCheie = {"128", "192", "256"};
+    private final String[] dimensiuniCheie = {"128","160", "192", "256","448"};
     private String selectedFilePath;
 
     // FXML data fields
@@ -94,24 +93,44 @@ public class FxController implements Initializable {
     @FXML
     private TextField emailField;
 
-
-
     @FXML
     protected void onLogInButtonClicked(ActionEvent event) throws IOException {
+            String validEmail = "admin@gmail.com";
+            String validPass = "Pass1234ote!";
+            String email = emailField.getText();
+            String password = passwordField.getText();
 
-        String validEmail = "admin@gmail.com";
-        String validPass = "Pass1234!";
-        String email = emailField.getText();
-        String password = passwordField.getText();
+            if(!User.isValidEmail(email)){
+                loginResultText.setText("Adresa de email invalida!");
+            } else if (!User.validatePassword(password)) {
+                loginResultText.setText("Parola invalida!");
+            } else{
+                // Example: Check if email and password are valid
+                if (validEmail.equals(email) && validPass.equals(password)) {
+                    loginResultText.setText("Login successful!");
+                    switchMainApplicationScene(event);
+                } else {
+                    loginResultText.setText("Parola sau adresa de email incorecta!");
+                }
+            }
 
-        // Example: Check if email and password are valid
-        if (validEmail.equals(email) && validPass.equals(password)) {
-            loginResultText.setText("Login successful!");
-            switchMainApplicationScene(event);
 
-        } else {
-            loginResultText.setText("Parola sau adresa de email incorecta!");
-        }
+
+//            String email = emailField.getText();
+//            String password = passwordField.getText();
+//
+//            if(JDBC.authenticateUser(email, password)) {
+//                loginResultText.setText("Autentificare reusita!");
+//                switchMainApplicationScene(event);
+//            } else {
+//                loginResultText.setText("Parola sau adresa de email incorecta!");
+//            }
+//
+
+
+
+
+
     }
 
     @FXML

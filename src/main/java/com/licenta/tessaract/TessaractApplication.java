@@ -10,14 +10,18 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class TessaractApplication extends Application {
-
     public static void main(String[] args) {
-        launch();
+
+        boolean applicationConnectedToDatabase = false;
+        applicationConnectedToDatabase = JDBC.establishConnection();
+        if (applicationConnectedToDatabase) {
+            launch();
+        } else {
+            // TO DO: Display error message in a new window, application cannot connect to database
+        }
     }
 
     // TO DO: Hash of encrypted files
-    //
-
 
     @Override
     public void start(Stage stage) throws IOException {

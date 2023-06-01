@@ -8,19 +8,19 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="580.0" maxWidth="400.0" minHeight="580.0" minWidth="400.0" prefHeight="580.0" prefWidth="400.0" stylesheets="@styleScenes.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
+<AnchorPane maxHeight="400.0" maxWidth="700.0" minHeight="400.0" minWidth="700.0" prefHeight="400.0" prefWidth="700.0" stylesheets="@styleScenes.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
    <children>
-      <Button fx:id="butonContinuaAlegereOperatiune" layoutX="158.0" layoutY="517.0" mnemonicParsing="false" onAction="#chooseOperationButton" text="Continua" />
-      <RadioButton fx:id="butonOperatiuneCriptare" layoutX="44.0" layoutY="470.0" mnemonicParsing="false" text="Criptare date">
-         <toggleGroup>
-            <ToggleGroup fx:id="alegere" />
-         </toggleGroup></RadioButton>
-      <RadioButton fx:id="ButonOperatiuneDecriptare" layoutX="200.0" layoutY="470.0" mnemonicParsing="false" text="Decriptare date" toggleGroup="$alegere" />
-      <Label fx:id="alegeOperatiune" layoutX="44.0" layoutY="438.0" text="Alege operatiune: " />
-      <ImageView fitHeight="411.0" fitWidth="417.0" layoutX="-9.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="400.0" fitWidth="549.0" layoutX="300.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@background.png" />
          </image>
       </ImageView>
+      <Button fx:id="butonContinuaAlegereOperatiune" layoutX="103.0" layoutY="340.0" mnemonicParsing="false" onAction="#chooseOperationButton" text="Continua" />
+      <RadioButton fx:id="butonOperatiuneCriptare" layoutX="78.0" layoutY="102.0" mnemonicParsing="false" text="Criptare date">
+         <toggleGroup>
+            <ToggleGroup fx:id="alegere" />
+         </toggleGroup></RadioButton>
+      <RadioButton fx:id="ButonOperatiuneDecriptare" layoutX="78.0" layoutY="146.0" mnemonicParsing="false" text="Decriptare date" toggleGroup="$alegere" />
+      <Label fx:id="alegeOperatiune" layoutX="46.0" layoutY="64.0" text="Alege operatiune: " />
    </children>
 </AnchorPane>
