@@ -94,9 +94,9 @@ public class FxController implements Initializable {
     private TextField emailField;
 
     @FXML
-    protected void onLogInButtonClicked(ActionEvent event) throws IOException {
-            String validEmail = "admin@gmail.com";
-            String validPass = "Pass1234ote!";
+    protected void onLogInButtonClicked(ActionEvent event) throws IOException, NoSuchAlgorithmException {
+          //  String validEmail = "admin@gmail.com";
+          //  String validPass = "Pass1234ote!";
             String email = emailField.getText();
             String password = passwordField.getText();
 
@@ -105,32 +105,15 @@ public class FxController implements Initializable {
             } else if (!User.validatePassword(password)) {
                 loginResultText.setText("Parola invalida!");
             } else{
-                // Example: Check if email and password are valid
-                if (validEmail.equals(email) && validPass.equals(password)) {
-                    loginResultText.setText("Login successful!");
+                if(JDBC.authenticateUser(email, password)){
+                    loginResultText.setText("Autentificare reusita!");
+                    emailField.setText("");
+                    passwordField.setText("");
                     switchMainApplicationScene(event);
                 } else {
-                    loginResultText.setText("Parola sau adresa de email incorecta!");
+                    loginResultText.setText("Autentificare esuata!");
                 }
             }
-
-
-
-//            String email = emailField.getText();
-//            String password = passwordField.getText();
-//
-//            if(JDBC.authenticateUser(email, password)) {
-//                loginResultText.setText("Autentificare reusita!");
-//                switchMainApplicationScene(event);
-//            } else {
-//                loginResultText.setText("Parola sau adresa de email incorecta!");
-//            }
-//
-
-
-
-
-
     }
 
     @FXML
@@ -139,23 +122,27 @@ public class FxController implements Initializable {
     }
 
     @FXML
-    protected String onCreateNewAccountButtonClicked(ActionEvent event) {
-
+    private void onCreateNewAccountButtonClicked(ActionEvent event) throws NoSuchAlgorithmException, IOException {
         String userName = newUserName.getText();
         String userEmail = newEmailAddress.getText();
         String userAccountPassword = newAccountPassword.getText();
-        String newUser = userName + " " + userEmail + " " + userAccountPassword;
-        userDetails.setText("User Details: " + newUser);
-        PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 3 seconds delay
-        pause.setOnFinished(e -> {
-            try {
-                switchStartApplicationScene(event);
-            } catch (IOException ex) {
-                ex.printStackTrace();
+        // TO DO check if email already exists in database
+        // TO DO check if password was already used for the account in database
+
+        if(!User.isValidEmail(userEmail)){
+            userDetails.setText("Adresa de email invalida!");
+        } else if (!User.validatePassword(userAccountPassword)) {
+            userDetails.setText("Parola invalida!");
+        } else{
+            if (JDBC.createUser(userName, userEmail, userAccountPassword)){
+                userDetails.setText("Contul a fost creat cu succes!");
+                newUserName.setText("");
+                newEmailAddress.setText("");
+                newAccountPassword.setText("");
+            } else {
+                userDetails.setText("Contul nu a putut fi creat!");
             }
-        });
-        pause.play();
-        return newUser;
+        }
     }
     @FXML
     private void chooseOperationButton(ActionEvent event) {
@@ -174,7 +161,7 @@ public class FxController implements Initializable {
             }
     }
 
-    // Method to add a file in the encryption scene when adauga DocumentButton is clicked (TO DO)    EncryptionScene.fxml -> adaugaDocumentButton
+    // Method to add a file in the encryption scene when adauga DocumentButton is clicked (TO DO)
     @FXML
     private void addDocumentButton() {
         FileChooser fileChooser = new FileChooser();
@@ -185,7 +172,6 @@ public class FxController implements Initializable {
 
         // Show the file chooser dialog
         File selectedFile = fileChooser.showOpenDialog(adaugaDocumentButton.getScene().getWindow());
-
         if (selectedFile != null) {
             String fileName = selectedFile.getName();
             numeDocument.setText(fileName);
@@ -201,7 +187,6 @@ public class FxController implements Initializable {
     @FXML
     private void encryptButton() {
         String filePath = selectedFilePath;
-
         if (filePath == null || filePath.isEmpty()) {
             encryptionStatusLabel.setText("No file selected.");
             return;
@@ -213,14 +198,11 @@ public class FxController implements Initializable {
             encryptionStatusLabel.setText("File not found.");
             return;
         }
-
         try {
             // Generate a new AES key
             KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
             keyGenerator.init(256);
             SecretKey key = keyGenerator.generateKey();
-
-
             // Generate an initialization vector (IV)
             SecureRandom random = new SecureRandom();
             byte[] ivBytes = new byte[12];
@@ -263,6 +245,8 @@ public class FxController implements Initializable {
             encryptionStatusLabel.setText("Encryption failed: " + e.getMessage());
         }
     }
+
+
     @FXML
     private void decryptionButton() {
         String filePath = selectedFilePath;

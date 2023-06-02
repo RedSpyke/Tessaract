@@ -71,7 +71,7 @@ public class User {
         hashPasswords.add(hashPassword);
     }
 
-    private String hashPassword(String password) throws NoSuchAlgorithmException {
+    protected static String hashPassword(String password) throws NoSuchAlgorithmException {
         if (password == null) {
             throw new IllegalArgumentException("Password cannot be null");
         } else if (password.isEmpty()) {

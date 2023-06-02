@@ -11,9 +11,9 @@ import java.util.Objects;
 
 public class TessaractApplication extends Application {
     public static void main(String[] args) {
-
-        boolean applicationConnectedToDatabase = false;
-        applicationConnectedToDatabase = JDBC.establishConnection();
+        boolean applicationConnectedToDatabase;
+        JDBC.getConnection(); // Establish connection to database
+        applicationConnectedToDatabase = JDBC.checkConnection(); // Check if connection to database was established
         if (applicationConnectedToDatabase) {
             launch();
         } else {

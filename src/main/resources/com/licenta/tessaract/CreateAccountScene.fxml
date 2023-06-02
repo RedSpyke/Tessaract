@@ -4,14 +4,48 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="CreateAccountPane" maxHeight="400.0" maxWidth="700.0" minHeight="400.0" minWidth="700.0" prefHeight="400.0" prefWidth="700.0" stylesheets="@styleScenes.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
     <children>
-        <PasswordField fx:id="newAccountPassword" alignment="CENTER" layoutX="126.0" layoutY="226.0" promptText="Password" />
-        <Button fx:id="createNewAccountButton" layoutX="152.0" layoutY="289.0" mnemonicParsing="false" onAction="#onCreateNewAccountButtonClicked" text="Create Account" />
-        <TextField fx:id="newEmailAddress" alignment="CENTER" layoutX="127.0" layoutY="175.0" promptText="Email Address " />
-        <TextField fx:id="newUserName" alignment="CENTER" layoutX="127.0" layoutY="126.0" promptText="User Name" />
-        <Label fx:id="userDetails" alignment="CENTER" contentDisplay="CENTER" layoutX="37.0" layoutY="344.0" prefHeight="17.0" prefWidth="334.0" />
+        <PasswordField fx:id="newAccountPassword" alignment="CENTER" layoutX="67.0" layoutY="284.0" promptText="Parola" />
+        <Button fx:id="createNewAccountButton" layoutX="18.0" layoutY="351.0" mnemonicParsing="false" onAction="#onCreateNewAccountButtonClicked" prefWidth="110.0" text="Creeaza cont" />
+        <TextField fx:id="newEmailAddress" alignment="CENTER" layoutX="67.0" layoutY="210.0" promptText="Adresa de e-mail" />
+        <TextField fx:id="newUserName" alignment="CENTER" layoutX="67.0" layoutY="142.0" promptText="Nume de utilizator" />
+        <Label fx:id="userDetails" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="323.0" prefHeight="20.0" prefWidth="273.0" />
+      <Label fx:id="numeAplicatie" layoutX="94.0" layoutY="20.0" text="TESSARCT">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="421.0" fitWidth="421.0" layoutX="289.0" layoutY="-11.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@contIMG.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="numeAplicatie1" layoutX="73.0" layoutY="76.0" text="Creeaza cont de utilizator">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Button fx:id="backToLoginScene" layoutX="166.0" layoutY="351.0" mnemonicParsing="false" onAction="#switchStartApplicationScene" prefWidth="110.0" text="Logare" />
+      <Label fx:id="numeAplicatie11" layoutX="68.0" layoutY="122.0" text="Introduce nume utilizator">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="numeAplicatie111" layoutX="70.0" layoutY="190.0" text="Introduce adresa de email ">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="numeAplicatie1111" layoutX="67.0" layoutY="264.0" text="Introduce parola">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
     </children>
 </AnchorPane>

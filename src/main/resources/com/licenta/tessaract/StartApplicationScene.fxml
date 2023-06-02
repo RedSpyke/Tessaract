@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="StartApplicationScene" maxHeight="400.0" maxWidth="700.0" minHeight="400.0" minWidth="700.0" prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
+<AnchorPane fx:id="StartApplicationScene" maxHeight="400.0" maxWidth="700.0" minHeight="400.0" minWidth="700.0" prefHeight="400.0" prefWidth="700.0" stylesheets="@styleScenes.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
     <children>
         <Label fx:id="loginResultText" layoutX="45.0" layoutY="297.0" prefHeight="20.0" prefWidth="201.0" />
         <Button fx:id="LogInButton" layoutX="45.0" layoutY="330.0" mnemonicParsing="false" onAction="#onLogInButtonClicked" text="Autentificare" />
