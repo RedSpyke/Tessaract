@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class User {
+public class User{
     private final ArrayList<String> hashPasswords = new ArrayList<>();
     private String userName;
     private String emailAddress;
@@ -32,7 +32,6 @@ public class User {
             throw new IllegalArgumentException("Invalid password");
         }
         this.userName = userName;
-
     }
 
     protected static boolean isValidEmail(String email) {

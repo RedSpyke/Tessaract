@@ -15,15 +15,20 @@ import javafx.util.Duration;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -34,21 +39,37 @@ import java.util.ResourceBundle;
 
 public class FxController implements Initializable {
 
+
+    @FXML
     private Stage stage = new Stage();
-
-
-
 
     @Override
     public void initialize(URL args0, ResourceBundle args1) {
+        comboBoxCheieDecriptare.getItems().addAll(dimensiuniCheie);
         comboBoxCheie.getItems().addAll(dimensiuniCheie);
     }
 
     // Data fields
-    private final String[] dimensiuniCheie = {"128","160", "192", "256","448"};
+    private String numeUtilizatorLogat;
+
+    private final String[] dimensiuniCheie = {"128","192","256"};
     private String selectedFilePath;
 
     // FXML data fields
+    @FXML
+    public RadioButton blowfishRadioButton;
+    @FXML
+    public RadioButton cast5RadioButton;
+    @FXML
+    public RadioButton AESRadioButton;
+    @FXML
+    public RadioButton ButonOperatiuneDecriptareKey;
+    @FXML
+    public RadioButton butonOperatiuneCriptareKey;
+    @FXML
+    public RadioButton butonVerificareDate;
+    @FXML
+    public ComboBox <String>comboBoxCheieDecriptare = new ComboBox<>();
     @FXML
     public ComboBox <String> comboBoxCheie = new ComboBox<>();
     @FXML
@@ -102,20 +123,24 @@ public class FxController implements Initializable {
 
             if(!User.isValidEmail(email)){
                 loginResultText.setText("Adresa de email invalida!");
+                resetTextFields();
             } else if (!User.validatePassword(password)) {
                 loginResultText.setText("Parola invalida!");
+                resetTextFields();
             } else{
                 if(JDBC.authenticateUser(email, password)){
                     loginResultText.setText("Autentificare reusita!");
-                    emailField.setText("");
-                    passwordField.setText("");
+                    numeUtilizatorLogat = JDBC.retrieveUserName(email);
                     switchMainApplicationScene(event);
                 } else {
                     loginResultText.setText("Autentificare esuata!");
                 }
             }
     }
-
+    private void resetTextFields() {
+        emailField.setText("");
+        passwordField.setText("");
+    }
     @FXML
     protected void onCreateAccountButtonClicked(ActionEvent event) throws IOException {
         switchCreateAccountScene(event);
@@ -131,8 +156,10 @@ public class FxController implements Initializable {
 
         if(!User.isValidEmail(userEmail)){
             userDetails.setText("Adresa de email invalida!");
+            resetTextFields();
         } else if (!User.validatePassword(userAccountPassword)) {
             userDetails.setText("Parola invalida!");
+            resetTextFields();
         } else{
             if (JDBC.createUser(userName, userEmail, userAccountPassword)){
                 userDetails.setText("Contul a fost creat cu succes!");
@@ -169,7 +196,6 @@ public class FxController implements Initializable {
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
-
         // Show the file chooser dialog
         File selectedFile = fileChooser.showOpenDialog(adaugaDocumentButton.getScene().getWindow());
         if (selectedFile != null) {
@@ -179,11 +205,12 @@ public class FxController implements Initializable {
         }
     }
 
-    private String encodeKey(SecretKey key) {
-        byte[] keyBytes = key.getEncoded();
-        return Base64.getEncoder().encodeToString(keyBytes);
+    private byte[] generateSalt() {
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[16];
+        random.nextBytes(salt);
+        return salt;
     }
-
     @FXML
     private void encryptButton() {
         String filePath = selectedFilePath;
@@ -191,26 +218,43 @@ public class FxController implements Initializable {
             encryptionStatusLabel.setText("No file selected.");
             return;
         }
-
         File inputFile = new File(filePath);
-
         if (!inputFile.exists()) {
             encryptionStatusLabel.setText("File not found.");
             return;
         }
+        String password = parolaCheie.getText();
+        if (password.isEmpty()) {
+            encryptionStatusLabel.setText("Password is required.");
+            return;
+        }
+        int keySize;
+        String algorithm = getSelectedAlgorithm();
+        if ("CAST5".equals(algorithm)) {
+            keySize = 128;
+        } else {
+            keySize = Integer.parseInt(comboBoxCheie.getValue());
+        }
         try {
-            // Generate a new AES key
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            keyGenerator.init(256);
-            SecretKey key = keyGenerator.generateKey();
+            // Generate a salt
+            byte[] salt = generateSalt();
+
+            // Generate a key using PBKDF2
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, keySize);
+            SecretKey key = null;
+            if (algorithm != null) {
+                key = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), algorithm);
+            }
+
             // Generate an initialization vector (IV)
-            SecureRandom random = new SecureRandom();
+            SecureRandom ivRandom = new SecureRandom();
             byte[] ivBytes = new byte[12];
-            random.nextBytes(ivBytes);
+            ivRandom.nextBytes(ivBytes);
             GCMParameterSpec iv = new GCMParameterSpec(128, ivBytes);
 
-            // Create a cipher object in GCM mode with AES algorithm
-            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            // Create a cipher object in GCM mode with the chosen algorithm
+            Cipher cipher = Cipher.getInstance(algorithm + "/GCM/NoPadding");
             cipher.init(Cipher.ENCRYPT_MODE, key, iv);
 
             // Read the contents of the input file
@@ -219,13 +263,20 @@ public class FxController implements Initializable {
             // Encrypt the input bytes
             byte[] encryptedBytes = cipher.doFinal(inputBytes);
 
+            // Combine salt, IV, and encrypted bytes
+            ByteBuffer encryptedBuffer = ByteBuffer.allocate(salt.length + ivBytes.length + encryptedBytes.length);
+            encryptedBuffer.put(salt);
+            encryptedBuffer.put(ivBytes);
+            encryptedBuffer.put(encryptedBytes);
+            byte[] encryptedData = encryptedBuffer.array();
+
             // Get the file name without extension
             String fileName = inputFile.getName();
             int extensionIndex = fileName.lastIndexOf(".");
             String fileNameWithoutExtension = (extensionIndex != -1) ? fileName.substring(0, extensionIndex) : fileName;
 
             // Create the encrypted file name
-            String encryptedFileName = fileNameWithoutExtension + "_encrypted.bin";
+            String encryptedFileName = fileNameWithoutExtension + "_encrypted" + getOriginalFileExtension(fileName);
 
             // Save the encrypted file
             FileChooser fileChooser = new FileChooser();
@@ -234,61 +285,76 @@ public class FxController implements Initializable {
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Binary Files", "*.bin"));
             File outputFile = fileChooser.showSaveDialog(new Stage());
             if (outputFile != null) {
-                Files.write(outputFile.toPath(), encryptedBytes);
+                Files.write(outputFile.toPath(), encryptedData);
                 encryptionStatusLabel.setText("Encryption completed. Encrypted file saved.");
             } else {
                 encryptionStatusLabel.setText("Encryption canceled.");
             }
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
-                 InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException |
-                 IOException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException | InvalidKeyException |
+                 InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | IOException e) {
             encryptionStatusLabel.setText("Encryption failed: " + e.getMessage());
         }
     }
 
 
+    private String getSelectedAlgorithm() {
+        if (AESRadioButton.isSelected()) {
+            return "AES";
+        } else if (blowfishRadioButton.isSelected()) {
+            return "Blowfish";
+        } else if (cast5RadioButton.isSelected()) {
+            return "CAST5";
+        } else {
+            return null;
+        }
+    }
+
     @FXML
     private void decryptionButton() {
         String filePath = selectedFilePath;
-
         if (filePath == null || filePath.isEmpty()) {
             encryptionStatusLabel.setText("No file selected.");
             return;
         }
-
-        String keyText = " "; // TO DO: Get the encryption key from the key text field
-        if (keyText == null || keyText.isEmpty()) {
-            encryptionStatusLabel.setText("No encryption key available.");
-            return;
-        }
-
         File inputFile = new File(filePath);
-
         if (!inputFile.exists()) {
             encryptionStatusLabel.setText("File not found.");
             return;
         }
+        String password = parolaCheie.getText();
+        if (password.isEmpty()) {
+            encryptionStatusLabel.setText("Password is required.");
+            return;
+        }
 
+        int keySize;
+        String algorithm = getSelectedAlgorithm();
+        if ("CAST5".equals(algorithm)) {
+            keySize = 128;
+        } else {
+            keySize = Integer.parseInt(comboBoxCheieDecriptare.getValue());
+        }
         try {
-            // Decode the encryption key from Base64
-            byte[] keyBytes = Base64.getDecoder().decode(keyText);
-            SecretKey encryptionKey = new SecretKeySpec(keyBytes, "AES");
-
-            // Generate an initialization vector (IV)
-            SecureRandom random = new SecureRandom();
-            byte[] ivBytes = new byte[12];
-            random.nextBytes(ivBytes);
-            GCMParameterSpec iv = new GCMParameterSpec(128, ivBytes);
-
-            // Create a cipher object in GCM mode with AES algorithm
-            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-            cipher.init(Cipher.DECRYPT_MODE, encryptionKey, iv);
-
-            // Read the contents of the input file
+            // Read the contents of the encrypted file
             byte[] encryptedBytes = Files.readAllBytes(inputFile.toPath());
 
-            // Decrypt the input bytes
-            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+            // Extract the salt, IV, and encrypted data from the encrypted bytes
+            byte[] salt = Arrays.copyOfRange(encryptedBytes, 0, 16);
+            byte[] ivBytes = Arrays.copyOfRange(encryptedBytes, 16, 28);
+            byte[] encryptedData = Arrays.copyOfRange(encryptedBytes, 28, encryptedBytes.length);
+
+            // Generate a key using PBKDF2
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, keySize);
+            SecretKey key = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), algorithm);
+
+            // Create a cipher object in GCM mode with the chosen algorithm
+            Cipher cipher = Cipher.getInstance(algorithm + "/GCM/NoPadding");
+            GCMParameterSpec iv = new GCMParameterSpec(128, ivBytes);
+            cipher.init(Cipher.DECRYPT_MODE, key, iv);
+
+            // Decrypt the encrypted bytes
+            byte[] decryptedBytes = cipher.doFinal(encryptedData);
 
             // Get the file name without extension
             String fileName = inputFile.getName();
@@ -296,13 +362,13 @@ public class FxController implements Initializable {
             String fileNameWithoutExtension = (extensionIndex != -1) ? fileName.substring(0, extensionIndex) : fileName;
 
             // Create the decrypted file name
-            String decryptedFileName = fileNameWithoutExtension + "_decrypted.txt";
+            String decryptedFileName = fileNameWithoutExtension + "_decrypted" + getOriginalFileExtension(fileName);
 
             // Save the decrypted file
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Decrypted File");
             fileChooser.setInitialFileName(decryptedFileName);
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
             File outputFile = fileChooser.showSaveDialog(new Stage());
             if (outputFile != null) {
                 Files.write(outputFile.toPath(), decryptedBytes);
@@ -310,11 +376,14 @@ public class FxController implements Initializable {
             } else {
                 encryptionStatusLabel.setText("Decryption canceled.");
             }
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
-                 InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException |
-                 IOException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException | InvalidKeyException |
+                 InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | IOException e) {
             encryptionStatusLabel.setText("Decryption failed: " + e.getMessage());
         }
+    }
+    private String getOriginalFileExtension(String fileName) {
+        int extensionIndex = fileName.lastIndexOf(".");
+        return (extensionIndex != -1) ? fileName.substring(extensionIndex) : "";
     }
 
     private void switchScene(String fxmlFileName, ActionEvent event) throws IOException {

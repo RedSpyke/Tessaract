@@ -14,7 +14,7 @@ public class TessaractApplication extends Application {
         boolean applicationConnectedToDatabase;
         JDBC.getConnection(); // Establish connection to database
         applicationConnectedToDatabase = JDBC.checkConnection(); // Check if connection to database was established
-        if (applicationConnectedToDatabase) {
+        if(applicationConnectedToDatabase) {
             launch();
         } else {
             // TO DO: Display error message in a new window, application cannot connect to database

@@ -1,26 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="700.0" stylesheets="@styleScenes.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
    <children>
-      <Label fx:id="titluDecriptareScene" layoutX="70.0" layoutY="25.0" text="Modul Decriptare" />
-      <Button fx:id="adaugaDocumentButton" layoutX="25.0" layoutY="85.0" mnemonicParsing="false" onAction="#addDocumentButton" text="Adauga document " />
-      <TextField fx:id="numeDocument" layoutX="25.0" layoutY="200.0" prefHeight="25.0" prefWidth="280.0" promptText="Nume document criptat" />
+      <Label fx:id="titluDecriptareScene" layoutX="78.0" layoutY="17.0" text="Modul Decriptare" />
+      <Button fx:id="adaugaDocumentButton" layoutX="25.0" layoutY="117.0" mnemonicParsing="false" onAction="#addDocumentButton" text="Adauga document " />
+      <TextField fx:id="numeDocument" layoutX="25.0" layoutY="185.0" prefHeight="25.0" prefWidth="260.0" promptText="Nume document criptat" />
       <Button layoutX="25.0" layoutY="341.0" mnemonicParsing="false" onAction="#decryptionButton" text="Decripteaza" />
-      <Label fx:id="encryptionStatusLabel" layoutX="25.0" layoutY="305.0" prefHeight="17.0" prefWidth="305.0" />
-      <Button fx:id="adaugaCheie" layoutX="25.0" layoutY="145.0" mnemonicParsing="false" onAction="#addDocumentButton" text="Adauga cheie  " />
-      <TextField fx:id="parolaCheie" layoutX="25.0" layoutY="242.0" prefHeight="25.0" prefWidth="280.0" promptText="Parola Cheie " />
-      <ImageView fitHeight="400.0" fitWidth="400.0" layoutX="323.0" pickOnBounds="true" preserveRatio="true">
+      <Label fx:id="encryptionStatusLabel" layoutX="5.0" layoutY="305.0" prefHeight="20.0" prefWidth="333.0" />
+      <TextField fx:id="parolaCheie" layoutX="25.0" layoutY="242.0" prefHeight="25.0" prefWidth="260.0" promptText="Parola Cheie " />
+      <ImageView fitHeight="400.0" fitWidth="400.0" layoutX="340.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@deCrypt.png" />
          </image>
       </ImageView>
       <Button fx:id="butonBack" layoutX="150.0" layoutY="341.0" mnemonicParsing="false" onAction="#switchMainApplicationScene" text="Alege operatiune" />
+      <Label fx:id="numeUtilizator" layoutX="426.0" layoutY="14.0" prefHeight="20.0" prefWidth="260.0" />
+      <Label layoutX="350.0" layoutY="122.0" text="Alege algoritmul folosit la criptare" />
+      <ComboBox fx:id="comboBoxCheieDecriptare" layoutX="510.0" layoutY="156.0" prefHeight="25.0" prefWidth="169.0" promptText="Alege dimensiune cheie" />
+      <RadioButton fx:id="AESRadioButton" layoutX="350.0" layoutY="158.0" mnemonicParsing="false" text="AES">
+         <toggleGroup>
+            <ToggleGroup fx:id="algoritmDec" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="blowfishRadioButton" layoutX="350.0" layoutY="197.0" mnemonicParsing="false" text="Blowfish" toggleGroup="$algoritmDec" />
+      <RadioButton fx:id="cast5RadioButton" layoutX="350.0" layoutY="237.0" mnemonicParsing="false" text="CAST5" toggleGroup="$algoritmDec" />
    </children>
 </AnchorPane>

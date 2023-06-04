@@ -16,11 +16,14 @@
          </image>
       </ImageView>
       <Button fx:id="butonContinuaAlegereOperatiune" layoutX="103.0" layoutY="340.0" mnemonicParsing="false" onAction="#chooseOperationButton" text="Continua" />
-      <RadioButton fx:id="butonOperatiuneCriptare" layoutX="78.0" layoutY="102.0" mnemonicParsing="false" text="Criptare date">
+      <RadioButton fx:id="butonOperatiuneCriptare" layoutX="20.0" layoutY="80.0" mnemonicParsing="false" text="Criptare date pe baza de parola">
          <toggleGroup>
             <ToggleGroup fx:id="alegere" />
          </toggleGroup></RadioButton>
-      <RadioButton fx:id="ButonOperatiuneDecriptare" layoutX="78.0" layoutY="146.0" mnemonicParsing="false" text="Decriptare date" toggleGroup="$alegere" />
-      <Label fx:id="alegeOperatiune" layoutX="46.0" layoutY="64.0" text="Alege operatiune: " />
+      <RadioButton fx:id="ButonOperatiuneDecriptare" layoutX="20.0" layoutY="120.0" mnemonicParsing="false" text="Decriptare date pe baza de parola" toggleGroup="$alegere" />
+      <Label fx:id="alegeOperatiune" layoutX="14.0" layoutY="37.0" text="Alege operatiune: " />
+      <RadioButton fx:id="ButonOperatiuneDecriptareKey" layoutX="20.0" layoutY="240.0" mnemonicParsing="false" text="Decriptare date pe baza de cheie" toggleGroup="$alegere" />
+      <RadioButton fx:id="butonOperatiuneCriptareKey" layoutX="20.0" layoutY="200.0" mnemonicParsing="false" text="Criptare date pe baza de cheie" toggleGroup="$alegere" />
+      <RadioButton fx:id="butonVerificareDate" layoutX="20.0" layoutY="160.0" mnemonicParsing="false" text="Verificare integritate date" toggleGroup="$alegere" />
    </children>
 </AnchorPane>
