@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class TessaractApplication extends Application {
+
+    protected static String emailUtilizatorLogat = "";
     public static void main(String[] args) {
         boolean applicationConnectedToDatabase;
         JDBC.getConnection(); // Establish connection to database

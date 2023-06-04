@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="700.0" stylesheets="@styleScenes.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
+   <children>
+      <Label fx:id="titluCriptareScene" layoutX="34.0" layoutY="28.0" text="Verifica Integritate date" />
+      <Button fx:id="adaugaDocumentButton" layoutX="34.0" layoutY="104.0" mnemonicParsing="false" onAction="#addDocumentButton" text="Adauga document " />
+      <TextField fx:id="numeDocument" layoutX="34.0" layoutY="176.0" prefHeight="30.0" prefWidth="250.0" promptText="Nume document" />
+      <Button fx:id="butonVerifica" layoutX="34.0" layoutY="316.0" mnemonicParsing="false" onAction="#verificaIntegritareDate" text="Verifica" />
+      <Label fx:id="rezultatVerificare" layoutX="34.0" layoutY="267.0" prefHeight="20.0" prefWidth="250.0" />
+      <Button fx:id="butonBack" layoutX="144.0" layoutY="316.0" mnemonicParsing="false" onAction="#switchMainApplicationScene" prefWidth="140.0" text="Alege operatiune" />
+      <ImageView fitHeight="488.0" fitWidth="416.0" layoutX="319.0" layoutY="-8.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@Background1.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>

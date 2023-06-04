@@ -1,6 +1,5 @@
 package com.licenta.tessaract;
 
-import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,34 +10,30 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-
+import static com.licenta.tessaract.JDBC.checkHashValue;
 
 // TO DO Validare metode
 
 public class FxController implements Initializable {
-
 
     @FXML
     private Stage stage = new Stage();
@@ -50,12 +45,19 @@ public class FxController implements Initializable {
     }
 
     // Data fields
-    private String numeUtilizatorLogat;
 
     private final String[] dimensiuniCheie = {"128","192","256"};
     private String selectedFilePath;
 
     // FXML data fields
+    @FXML
+    public RadioButton genereazaHashDate;
+    @FXML
+    public Label rezultatVerificare;
+    @FXML
+    public Button butonVerifica;
+    @FXML
+    public RadioButton butonVerificareDateScene;
     @FXML
     public RadioButton blowfishRadioButton;
     @FXML
@@ -66,8 +68,6 @@ public class FxController implements Initializable {
     public RadioButton ButonOperatiuneDecriptareKey;
     @FXML
     public RadioButton butonOperatiuneCriptareKey;
-    @FXML
-    public RadioButton butonVerificareDate;
     @FXML
     public ComboBox <String>comboBoxCheieDecriptare = new ComboBox<>();
     @FXML
@@ -130,7 +130,8 @@ public class FxController implements Initializable {
             } else{
                 if(JDBC.authenticateUser(email, password)){
                     loginResultText.setText("Autentificare reusita!");
-                    numeUtilizatorLogat = JDBC.retrieveUserName(email);
+                    TessaractApplication.emailUtilizatorLogat = email;
+                    System.out.println("Email utilizator logat: " + TessaractApplication.emailUtilizatorLogat); // TO DO delete
                     switchMainApplicationScene(event);
                 } else {
                     loginResultText.setText("Autentificare esuata!");
@@ -185,6 +186,18 @@ public class FxController implements Initializable {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            } else if (butonVerificareDateScene.isSelected()) {
+                try {
+                    switchVerifyAccountScene(event);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else if(genereazaHashDate.isSelected()){
+                try {
+                    switchCreateHashScene(event);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
     }
 
@@ -211,6 +224,72 @@ public class FxController implements Initializable {
         random.nextBytes(salt);
         return salt;
     }
+    @FXML
+    private void verificaIntegritareDate() throws UnsupportedEncodingException {
+        // Get the file name from the text field
+        String fileName = numeDocument.getText();
+        System.out.println("Nume document: " + fileName);
+        String email = TessaractApplication.emailUtilizatorLogat;
+        System.out.println("Email utilizator logat: " + email);
+
+        String filePath = selectedFilePath;
+        if (filePath == null || filePath.isEmpty()) {
+            rezultatVerificare.setText("No file selected.");
+            return;
+        }
+        File inputFile = new File(filePath);
+        if (!inputFile.exists()) {
+            rezultatVerificare.setText("File not found.");
+        }
+
+        String hash = generateHashFunction(filePath.getBytes());
+        System.out.println("Hash: " + hash);
+        boolean dateValide = JDBC.checkHashValue(email, fileName, hash);
+        if (dateValide) {
+            rezultatVerificare.setText("Datele nu au fost modificate!");
+        } else {
+            rezultatVerificare.setText("Datele au fost modificate!");
+        }
+
+    }
+
+    @FXML
+    private void creazaValoareHash(){
+        // Get the file name from the text field
+        String fileName = numeDocument.getText();
+        System.out.println("Nume document: " + fileName);
+        String email = TessaractApplication.emailUtilizatorLogat;
+        System.out.println("Email utilizator logat: " + email);
+
+        String filePath = selectedFilePath;
+        if (filePath == null || filePath.isEmpty()) {
+            rezultatVerificare.setText("No file selected.");
+            return;
+        }
+        File inputFile = new File(filePath);
+        if (!inputFile.exists()) {
+            rezultatVerificare.setText("File not found.");
+        }
+        String hash = generateHashFunction(filePath.getBytes());
+        JDBC.writeHashValue(email, fileName, hash);
+    }
+
+    private String generateHashFunction(byte[] encryptedData) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashValue = md.digest(encryptedData);
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashValue) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
     @FXML
     private void encryptButton() {
         String filePath = selectedFilePath;
@@ -386,6 +465,7 @@ public class FxController implements Initializable {
         return (extensionIndex != -1) ? fileName.substring(extensionIndex) : "";
     }
 
+
     private void switchScene(String fxmlFileName, ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(fxmlFileName)));
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -412,6 +492,14 @@ public class FxController implements Initializable {
     @FXML
     private void switchStartApplicationScene(ActionEvent event) throws IOException {
         switchScene("StartApplicationScene.fxml", event);
+    }
+    @FXML
+    private void switchVerifyAccountScene(ActionEvent event) throws IOException {
+        switchScene("DataIntegrityVerifier.fxml", event);
+    }
+    
+    private void switchCreateHashScene(ActionEvent event) throws IOException {
+        switchScene("generateHashValueData.fxml", event);
     }
 
 }

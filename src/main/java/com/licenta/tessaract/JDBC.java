@@ -11,6 +11,8 @@ public class JDBC {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/" + DB_NAME;
     private static final String DB_USERNAME = "redspyke";
     private static final String DB_PASSWORD = "NORA549!cd";
+
+    private static final String tableName = "tessaractusers";
     protected static Connection connection;
 
     protected static void getConnection() {
@@ -69,7 +71,6 @@ public class JDBC {
         return userName;
     }
 
-
     protected static boolean createUser(String userName, String email, String password) throws NoSuchAlgorithmException {
         String hashedPassword = User.hashPassword(password);
         try {
@@ -98,6 +99,70 @@ public class JDBC {
         }
         return false;
     }
+    // TO DO: Hash of encrypted files
+    protected static boolean writeHashValue(String email, String encryptedFileName, String hashValue) {
+        try {
+            if (checkConnection()) {
+                // Create the SQL statement with placeholders
+                String sql = "INSERT INTO encrypted_files_hash (file_name, hash_value, user_id) SELECT ?, ?, userID FROM tessarctusers WHERE emailAddress = ?";
+                PreparedStatement statement = connection.prepareStatement(sql);
+
+                // Bind the input values to the prepared statement
+                statement.setString(1, encryptedFileName);
+                statement.setString(2, hashValue);
+                statement.setString(3, email);
+
+                // Execute the prepared statement
+                int rowsAffected = statement.executeUpdate();
+
+                // Close the statement
+                statement.close();
+
+                // Check if the rows were affected (indicating a successful write)
+                return rowsAffected > 0;
+            } else {
+                System.out.println("Database connection is not valid.");
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    protected static boolean checkHashValue(String email, String encryptedFileName, String hashValue) {
+        try {
+            if (checkConnection()) {
+                // Create the SQL statement with placeholders
+                String sql = "SELECT * FROM encrypted_files_hash WHERE user_id IN (SELECT userID FROM tessarctusers WHERE emailAddress = ?) AND file_name = ? AND hash_value = ?";
+                PreparedStatement statement = connection.prepareStatement(sql);
+
+                // Bind the input values to the prepared statement
+                statement.setString(1, email);
+                statement.setString(2, encryptedFileName);
+                statement.setString(3, hashValue);
+
+                // Execute the prepared statement and retrieve the result
+                ResultSet resultSet = statement.executeQuery();
+
+                // Check if a matching record was found
+                boolean hashMatch = resultSet.next();
+
+                // Close the statement and result set
+                statement.close();
+                resultSet.close();
+
+                return hashMatch;
+            } else {
+                System.out.println("Database connection is not valid.");
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     protected static boolean authenticateUser(String email, String password) throws NoSuchAlgorithmException {
         String hashedPassword = User.hashPassword(password);

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" stylesheets="@styleScenes.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.licenta.tessaract.FxController">
+   <children>
+      <Label fx:id="titluCriptareScene" layoutX="83.0" layoutY="25.0" text="Genereaza hash date" />
+      <Button fx:id="adaugaDocumentButton" layoutX="41.0" layoutY="126.0" mnemonicParsing="false" onAction="#addDocumentButton" text="Adauga document " />
+      <TextField fx:id="numeDocument" layoutX="41.0" layoutY="185.0" prefHeight="30.0" prefWidth="250.0" promptText="Nume document" />
+      <Button fx:id="butonGenereaza" layoutX="41.0" layoutY="296.0" mnemonicParsing="false" onAction="#creazaValoareHash" text="Genereaza" />
+      <Button fx:id="butonBack" layoutX="151.0" layoutY="296.0" mnemonicParsing="false" onAction="#switchMainApplicationScene" prefWidth="140.0" text="Alege operatiune" />
+   </children>
+</AnchorPane>
