@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
@@ -28,6 +29,11 @@ import java.security.spec.KeySpec;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKeyFactory;
+
 
 import static com.licenta.tessaract.JDBC.checkHashValue;
 
@@ -311,66 +317,150 @@ public class FxController implements Initializable {
         String algorithm = getSelectedAlgorithm();
         if ("CAST5".equals(algorithm)) {
             keySize = 128;
+            Security.addProvider(new BouncyCastleProvider());
         } else {
             keySize = Integer.parseInt(comboBoxCheie.getValue());
         }
-        try {
-            // Generate a salt
-            byte[] salt = generateSalt();
+        try{
+            if (algorithm.equals("AES")){
+                    // Generate a salt
+                    byte[] salt = generateSalt();
+                    // Generate a key using PBKDF2
+                    SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+                    KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, keySize);
+                    SecretKey key = null;
+                    key = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), algorithm);
+                    // Generate an initialization vector (IV)
+                    SecureRandom ivRandom = new SecureRandom();
+                    byte[] ivBytes = new byte[12];
+                    ivRandom.nextBytes(ivBytes);
+                    GCMParameterSpec iv = new GCMParameterSpec(128, ivBytes);
 
-            // Generate a key using PBKDF2
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, keySize);
-            SecretKey key = null;
-            if (algorithm != null) {
-                key = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), algorithm);
+                    // Create a cipher object in GCM mode with the chosen algorithm
+                    Cipher cipher = Cipher.getInstance(algorithm + "/GCM/NoPadding");
+                    cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+
+                    // Read the contents of the input file
+                    byte[] inputBytes = Files.readAllBytes(inputFile.toPath());
+
+                    // Encrypt the input bytes
+                    byte[] encryptedBytes = cipher.doFinal(inputBytes);
+
+                    // Combine salt, IV, and encrypted bytes
+                    ByteBuffer encryptedBuffer = ByteBuffer.allocate(salt.length + ivBytes.length + encryptedBytes.length);
+                    encryptedBuffer.put(salt);
+                    encryptedBuffer.put(ivBytes);
+                    encryptedBuffer.put(encryptedBytes);
+                    byte[] encryptedData = encryptedBuffer.array();
+
+                    // Get the file name without extension
+                    String fileName = inputFile.getName();
+                    int extensionIndex = fileName.lastIndexOf(".");
+                    String fileNameWithoutExtension = (extensionIndex != -1) ? fileName.substring(0, extensionIndex) : fileName;
+
+                    // Create the encrypted file name
+                    String encryptedFileName = fileNameWithoutExtension + "_encrypted" + getOriginalFileExtension(fileName);
+
+                    // Save the encrypted file
+                    FileChooser fileChooser = new FileChooser();
+                    fileChooser.setTitle("Save Encrypted File");
+                    fileChooser.setInitialFileName(encryptedFileName);
+                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Binary Files", "*.bin"));
+                    File outputFile = fileChooser.showSaveDialog(new Stage());
+                    if (outputFile != null) {
+                        Files.write(outputFile.toPath(), encryptedData);
+                        encryptionStatusLabel.setText("Encryption completed. Encrypted file saved.");
+                    } else {
+                        encryptionStatusLabel.setText("Encryption canceled.");
+                    }
             }
+            else if (algorithm.equals("Blowfish")) {
+                // Generate a secret key using the password
+                SecretKeySpec secretKey = new SecretKeySpec(password.getBytes(), "Blowfish");
 
-            // Generate an initialization vector (IV)
-            SecureRandom ivRandom = new SecureRandom();
-            byte[] ivBytes = new byte[12];
-            ivRandom.nextBytes(ivBytes);
-            GCMParameterSpec iv = new GCMParameterSpec(128, ivBytes);
+                // Create a cipher object with Blowfish algorithm
+                Cipher cipher = Cipher.getInstance("Blowfish");
+                cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-            // Create a cipher object in GCM mode with the chosen algorithm
-            Cipher cipher = Cipher.getInstance(algorithm + "/GCM/NoPadding");
-            cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+                // Read the contents of the input file
+                byte[] inputBytes = Files.readAllBytes(inputFile.toPath());
 
-            // Read the contents of the input file
-            byte[] inputBytes = Files.readAllBytes(inputFile.toPath());
+                // Encrypt the input bytes
+                byte[] encryptedBytes = cipher.doFinal(inputBytes);
 
-            // Encrypt the input bytes
-            byte[] encryptedBytes = cipher.doFinal(inputBytes);
+                // Get the file name without extension
+                String fileName = inputFile.getName();
+                int extensionIndex = fileName.lastIndexOf(".");
+                String fileNameWithoutExtension = (extensionIndex != -1) ? fileName.substring(0, extensionIndex) : fileName;
 
-            // Combine salt, IV, and encrypted bytes
-            ByteBuffer encryptedBuffer = ByteBuffer.allocate(salt.length + ivBytes.length + encryptedBytes.length);
-            encryptedBuffer.put(salt);
-            encryptedBuffer.put(ivBytes);
-            encryptedBuffer.put(encryptedBytes);
-            byte[] encryptedData = encryptedBuffer.array();
+                // Create the encrypted file name
+                String encryptedFileName = fileNameWithoutExtension + "_encrypted" + getOriginalFileExtension(fileName);
 
-            // Get the file name without extension
-            String fileName = inputFile.getName();
-            int extensionIndex = fileName.lastIndexOf(".");
-            String fileNameWithoutExtension = (extensionIndex != -1) ? fileName.substring(0, extensionIndex) : fileName;
-
-            // Create the encrypted file name
-            String encryptedFileName = fileNameWithoutExtension + "_encrypted" + getOriginalFileExtension(fileName);
-
-            // Save the encrypted file
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save Encrypted File");
-            fileChooser.setInitialFileName(encryptedFileName);
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Binary Files", "*.bin"));
-            File outputFile = fileChooser.showSaveDialog(new Stage());
-            if (outputFile != null) {
-                Files.write(outputFile.toPath(), encryptedData);
-                encryptionStatusLabel.setText("Encryption completed. Encrypted file saved.");
-            } else {
-                encryptionStatusLabel.setText("Encryption canceled.");
+                // Save the encrypted file
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Save Encrypted File");
+                fileChooser.setInitialFileName(encryptedFileName);
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Binary Files", "*.bin"));
+                File outputFile = fileChooser.showSaveDialog(new Stage());
+                if (outputFile != null) {
+                    Files.write(outputFile.toPath(), encryptedBytes);
+                    encryptionStatusLabel.setText("Encryption completed. Encrypted file saved.");
+                } else {
+                    encryptionStatusLabel.setText("Encryption canceled.");
+                }
             }
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException | InvalidKeyException |
-                 InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | IOException e) {
+            else if (algorithm.equals("CAST5")){
+                byte[] salt = generateSalt();
+
+                // Generate a key using PBKDF2
+                SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+                KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, keySize);
+                SecretKey key = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), algorithm);
+
+                // Create a cipher object with the CAST5 algorithm
+                Cipher cipher = Cipher.getInstance("CAST5/CBC/PKCS5Padding");
+                cipher.init(Cipher.ENCRYPT_MODE, key);
+
+                // Read the contents of the input file
+                byte[] inputBytes = Files.readAllBytes(inputFile.toPath());
+
+                // Encrypt the input bytes
+                byte[] encryptedBytes = cipher.doFinal(inputBytes);
+
+                // Combine salt and encrypted bytes
+                ByteBuffer encryptedBuffer = ByteBuffer.allocate(salt.length + cipher.getIV().length + encryptedBytes.length);
+                encryptedBuffer.put(salt);
+                encryptedBuffer.put(cipher.getIV());
+                encryptedBuffer.put(encryptedBytes);
+                byte[] encryptedData = encryptedBuffer.array();
+
+                // Get the file name without extension
+                String fileName = inputFile.getName();
+                int extensionIndex = fileName.lastIndexOf(".");
+                String fileNameWithoutExtension = (extensionIndex != -1) ? fileName.substring(0, extensionIndex) : fileName;
+
+                // Create the encrypted file name
+                String encryptedFileName = fileNameWithoutExtension + "_encrypted" + getOriginalFileExtension(fileName);
+
+                // Save the encrypted file
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Save Encrypted File");
+                fileChooser.setInitialFileName(encryptedFileName);
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Binary Files", "*.bin"));
+                File outputFile = fileChooser.showSaveDialog(new Stage());
+                if (outputFile != null) {
+                    Files.write(outputFile.toPath(), encryptedData);
+                    encryptionStatusLabel.setText("Encryption completed. Encrypted file saved.");
+                } else {
+                    encryptionStatusLabel.setText("Encryption canceled.");
+                }
+            }
+            else {
+                encryptionStatusLabel.setText("Please select an algorithm.");
+            }
+        }
+        catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException | InvalidKeyException |
+               InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | IOException e){
             encryptionStatusLabel.setText("Encryption failed: " + e.getMessage());
         }
     }
@@ -410,51 +500,136 @@ public class FxController implements Initializable {
         String algorithm = getSelectedAlgorithm();
         if ("CAST5".equals(algorithm)) {
             keySize = 128;
+            Security.addProvider(new BouncyCastleProvider());
         } else {
             keySize = Integer.parseInt(comboBoxCheieDecriptare.getValue());
         }
         try {
-            // Read the contents of the encrypted file
-            byte[] encryptedBytes = Files.readAllBytes(inputFile.toPath());
+            if(algorithm.equals("AES")) {
+                // Read the contents of the encrypted file
+                byte[] encryptedBytes = Files.readAllBytes(inputFile.toPath());
 
-            // Extract the salt, IV, and encrypted data from the encrypted bytes
-            byte[] salt = Arrays.copyOfRange(encryptedBytes, 0, 16);
-            byte[] ivBytes = Arrays.copyOfRange(encryptedBytes, 16, 28);
-            byte[] encryptedData = Arrays.copyOfRange(encryptedBytes, 28, encryptedBytes.length);
+                // Extract the salt, IV, and encrypted data from the encrypted bytes
+                byte[] salt = Arrays.copyOfRange(encryptedBytes, 0, 16);
+                byte[] ivBytes = Arrays.copyOfRange(encryptedBytes, 16, 28);
+                byte[] encryptedData = Arrays.copyOfRange(encryptedBytes, 28, encryptedBytes.length);
 
-            // Generate a key using PBKDF2
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, keySize);
-            SecretKey key = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), algorithm);
+                // Generate a key using PBKDF2
+                SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+                KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, keySize);
+                SecretKey key = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), algorithm);
 
-            // Create a cipher object in GCM mode with the chosen algorithm
-            Cipher cipher = Cipher.getInstance(algorithm + "/GCM/NoPadding");
-            GCMParameterSpec iv = new GCMParameterSpec(128, ivBytes);
-            cipher.init(Cipher.DECRYPT_MODE, key, iv);
+                // Create a cipher object in GCM mode with the chosen algorithm
+                Cipher cipher = Cipher.getInstance(algorithm + "/GCM/NoPadding");
+                GCMParameterSpec iv = new GCMParameterSpec(128, ivBytes);
+                cipher.init(Cipher.DECRYPT_MODE, key, iv);
 
-            // Decrypt the encrypted bytes
-            byte[] decryptedBytes = cipher.doFinal(encryptedData);
+                // Decrypt the encrypted bytes
+                byte[] decryptedBytes = cipher.doFinal(encryptedData);
 
-            // Get the file name without extension
-            String fileName = inputFile.getName();
-            int extensionIndex = fileName.lastIndexOf(".");
-            String fileNameWithoutExtension = (extensionIndex != -1) ? fileName.substring(0, extensionIndex) : fileName;
+                // Get the file name without extension
+                String fileName = inputFile.getName();
+                int extensionIndex = fileName.lastIndexOf(".");
+                String fileNameWithoutExtension = (extensionIndex != -1) ? fileName.substring(0, extensionIndex) : fileName;
 
-            // Create the decrypted file name
-            String decryptedFileName = fileNameWithoutExtension + "_decrypted" + getOriginalFileExtension(fileName);
+                // Create the decrypted file name
+                String decryptedFileName = fileNameWithoutExtension + "_decrypted" + getOriginalFileExtension(fileName);
 
-            // Save the decrypted file
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save Decrypted File");
-            fileChooser.setInitialFileName(decryptedFileName);
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
-            File outputFile = fileChooser.showSaveDialog(new Stage());
-            if (outputFile != null) {
-                Files.write(outputFile.toPath(), decryptedBytes);
-                encryptionStatusLabel.setText("Decryption completed. Decrypted file saved.");
-            } else {
-                encryptionStatusLabel.setText("Decryption canceled.");
+                // Save the decrypted file
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Save Decrypted File");
+                fileChooser.setInitialFileName(decryptedFileName);
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
+                File outputFile = fileChooser.showSaveDialog(new Stage());
+                if (outputFile != null) {
+                    Files.write(outputFile.toPath(), decryptedBytes);
+                    encryptionStatusLabel.setText("Decryption completed. Decrypted file saved.");
+                } else {
+                    encryptionStatusLabel.setText("Decryption canceled.");
+                }
             }
+            else if (algorithm.equals("Blowfish")) {
+                // Generate a key using the password
+                SecretKeySpec keySpec = new SecretKeySpec(password.getBytes(), "Blowfish");
+
+                // Create a cipher object with the Blowfish algorithm
+                Cipher cipher = Cipher.getInstance("Blowfish");
+                cipher.init(Cipher.DECRYPT_MODE, keySpec);
+
+                // Read the contents of the encrypted file
+                byte[] encryptedBytes = Files.readAllBytes(inputFile.toPath());
+
+                // Decrypt the encrypted bytes
+                byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+
+                // Get the file name without extension
+                String fileName = inputFile.getName();
+                int extensionIndex = fileName.lastIndexOf(".");
+                String fileNameWithoutExtension = (extensionIndex != -1) ? fileName.substring(0, extensionIndex) : fileName;
+
+                // Create the decrypted file name
+                String decryptedFileName = fileNameWithoutExtension + "_decrypted" + getOriginalFileExtension(fileName);
+
+                // Save the decrypted file
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Save Decrypted File");
+                fileChooser.setInitialFileName(decryptedFileName);
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
+                File outputFile = fileChooser.showSaveDialog(new Stage());
+                if (outputFile != null) {
+                    Files.write(outputFile.toPath(), decryptedBytes);
+                    encryptionStatusLabel.setText("Decryption completed. Decrypted file saved.");
+                } else {
+                    encryptionStatusLabel.setText("Decryption canceled.");
+                }
+            }
+            else if (algorithm.equals("CAST5")){
+                // Read the contents of the encrypted file
+                byte[] encryptedBytes = Files.readAllBytes(inputFile.toPath());
+
+                // Extract the salt, IV, and encrypted data from the encrypted bytes
+                byte[] salt = Arrays.copyOfRange(encryptedBytes, 0, 16);
+                byte[] ivBytes = Arrays.copyOfRange(encryptedBytes, 16, 24);
+                byte[] encryptedData = Arrays.copyOfRange(encryptedBytes, 24, encryptedBytes.length);
+
+                // Generate a key using PBKDF2
+                SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+                KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, keySize);
+                SecretKey key = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), algorithm);
+
+                // Create a cipher object with the CAST5 algorithm
+                Cipher cipher = Cipher.getInstance("CAST5/CBC/PKCS5Padding");
+                IvParameterSpec iv = new IvParameterSpec(ivBytes);
+                cipher.init(Cipher.DECRYPT_MODE, key, iv);
+
+                // Decrypt the encrypted bytes
+                byte[] decryptedBytes = cipher.doFinal(encryptedData);
+
+                // Get the file name without extension
+                String fileName = inputFile.getName();
+                int extensionIndex = fileName.lastIndexOf(".");
+                String fileNameWithoutExtension = (extensionIndex != -1) ? fileName.substring(0, extensionIndex) : fileName;
+
+                // Create the decrypted file name
+                String decryptedFileName = fileNameWithoutExtension + "_decrypted" + getOriginalFileExtension(fileName);
+
+                // Save the decrypted file
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Save Decrypted File");
+                fileChooser.setInitialFileName(decryptedFileName);
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
+                File outputFile = fileChooser.showSaveDialog(new Stage());
+                if (outputFile != null) {
+                    Files.write(outputFile.toPath(), decryptedBytes);
+                    encryptionStatusLabel.setText("Decryption completed. Decrypted file saved.");
+                } else {
+                    encryptionStatusLabel.setText("Decryption canceled.");
+                }
+            }
+            else {
+                encryptionStatusLabel.setText("Please select an algorithm.");
+            }
+
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException | InvalidKeyException |
                  InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | IOException e) {
             encryptionStatusLabel.setText("Decryption failed: " + e.getMessage());
