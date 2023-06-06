@@ -25,10 +25,6 @@
       <RadioButton fx:id="ButonOperatiuneDecriptareKey" layoutX="20.0" layoutY="280.0" mnemonicParsing="false" text="Decriptare date pe baza de cheie" toggleGroup="$alegere" />
       <RadioButton fx:id="butonOperatiuneCriptareKey" layoutX="20.0" layoutY="240.0" mnemonicParsing="false" text="Criptare date pe baza de cheie" toggleGroup="$alegere" />
       <RadioButton fx:id="butonVerificareDateScene" layoutX="20.0" layoutY="200.0" mnemonicParsing="false" text="Verifica hash date" toggleGroup="$alegere" />
-      <RadioButton fx:id="genereazaHashDate" layoutX="20.0" layoutY="160.0" mnemonicParsing="false" text="Genereaza hash date">
-         <toggleGroup>
-            <ToggleGroup fx:id="alegere1" />
-         </toggleGroup>
-      </RadioButton>
+      <RadioButton fx:id="genereazaHashDate" layoutX="20.0" layoutY="160.0" mnemonicParsing="false" text="Genereaza hash date" toggleGroup="$alegere" />
    </children>
 </AnchorPane>

@@ -17,9 +17,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -56,6 +54,7 @@ public class FxController implements Initializable {
     private String selectedFilePath;
 
     // FXML data fields
+
     @FXML
     public RadioButton genereazaHashDate;
     @FXML
@@ -204,6 +203,18 @@ public class FxController implements Initializable {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            } else if (butonOperatiuneCriptareKey.isSelected()) {
+                try {
+                    switchKeyBasedEncryptionScene(event);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else if (ButonOperatiuneDecriptareKey.isSelected()) {
+                try {
+                    switchKeyBasedDecryptionScene(event);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
     }
 
@@ -211,7 +222,7 @@ public class FxController implements Initializable {
     @FXML
     private void addDocumentButton() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Document");
+        fileChooser.setTitle("Selectati Document");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
@@ -231,7 +242,7 @@ public class FxController implements Initializable {
         return salt;
     }
     @FXML
-    private void verificaIntegritareDate() throws UnsupportedEncodingException {
+    private void verificaIntegritareDate() {
         // Get the file name from the text field
         String fileName = numeDocument.getText();
         System.out.println("Nume document: " + fileName);
@@ -240,12 +251,12 @@ public class FxController implements Initializable {
 
         String filePath = selectedFilePath;
         if (filePath == null || filePath.isEmpty()) {
-            rezultatVerificare.setText("No file selected.");
+            rezultatVerificare.setText("Niciun fisier selectat.");
             return;
         }
         File inputFile = new File(filePath);
         if (!inputFile.exists()) {
-            rezultatVerificare.setText("File not found.");
+            rezultatVerificare.setText("Fișierul nu a fost găsit.");
         }
 
         String hash = generateHashFunction(filePath.getBytes());
@@ -256,7 +267,6 @@ public class FxController implements Initializable {
         } else {
             rezultatVerificare.setText("Datele au fost modificate!");
         }
-
     }
 
     @FXML
@@ -269,12 +279,12 @@ public class FxController implements Initializable {
 
         String filePath = selectedFilePath;
         if (filePath == null || filePath.isEmpty()) {
-            rezultatVerificare.setText("No file selected.");
+            rezultatVerificare.setText("Fisierul nu a fost găsit.");
             return;
         }
         File inputFile = new File(filePath);
         if (!inputFile.exists()) {
-            rezultatVerificare.setText("File not found.");
+            rezultatVerificare.setText("Fisierul nu a fost găsit.");
         }
         String hash = generateHashFunction(filePath.getBytes());
         JDBC.writeHashValue(email, fileName, hash);
@@ -295,22 +305,21 @@ public class FxController implements Initializable {
         }
     }
 
-
     @FXML
     private void encryptButton() {
         String filePath = selectedFilePath;
         if (filePath == null || filePath.isEmpty()) {
-            encryptionStatusLabel.setText("No file selected.");
+            encryptionStatusLabel.setText("Niciun fisier selectat.");
             return;
         }
         File inputFile = new File(filePath);
         if (!inputFile.exists()) {
-            encryptionStatusLabel.setText("File not found.");
+            encryptionStatusLabel.setText("Fisierul nu a fost găsit.");
             return;
         }
         String password = parolaCheie.getText();
         if (password.isEmpty()) {
-            encryptionStatusLabel.setText("Password is required.");
+            encryptionStatusLabel.setText("Parola este necesara.");
             return;
         }
         int keySize;
@@ -369,9 +378,9 @@ public class FxController implements Initializable {
                     File outputFile = fileChooser.showSaveDialog(new Stage());
                     if (outputFile != null) {
                         Files.write(outputFile.toPath(), encryptedData);
-                        encryptionStatusLabel.setText("Encryption completed. Encrypted file saved.");
+                        encryptionStatusLabel.setText("Criptarea finalizată. Fișier criptat salvat.");
                     } else {
-                        encryptionStatusLabel.setText("Encryption canceled.");
+                        encryptionStatusLabel.setText("Criptarea a fost anulată.");
                     }
             }
             else if (algorithm.equals("Blowfish")) {
@@ -404,9 +413,9 @@ public class FxController implements Initializable {
                 File outputFile = fileChooser.showSaveDialog(new Stage());
                 if (outputFile != null) {
                     Files.write(outputFile.toPath(), encryptedBytes);
-                    encryptionStatusLabel.setText("Encryption completed. Encrypted file saved.");
+                    encryptionStatusLabel.setText("Criptarea finalizată. Fișier criptat salvat.");
                 } else {
-                    encryptionStatusLabel.setText("Encryption canceled.");
+                    encryptionStatusLabel.setText("Criptarea a fost anulată.");
                 }
             }
             else if (algorithm.equals("CAST5")){
@@ -450,21 +459,20 @@ public class FxController implements Initializable {
                 File outputFile = fileChooser.showSaveDialog(new Stage());
                 if (outputFile != null) {
                     Files.write(outputFile.toPath(), encryptedData);
-                    encryptionStatusLabel.setText("Encryption completed. Encrypted file saved.");
+                    encryptionStatusLabel.setText("Criptarea finalizată. Fișier criptat salvat.");
                 } else {
-                    encryptionStatusLabel.setText("Encryption canceled.");
+                    encryptionStatusLabel.setText("Criptarea a fost anulată.");
                 }
             }
             else {
-                encryptionStatusLabel.setText("Please select an algorithm.");
+                encryptionStatusLabel.setText("Vă rugăm să selectați un algoritm.");
             }
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException | InvalidKeyException |
                InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | IOException e){
-            encryptionStatusLabel.setText("Encryption failed: " + e.getMessage());
+            encryptionStatusLabel.setText("Criptarea a eșuat: " + e.getMessage());
         }
     }
-
 
     private String getSelectedAlgorithm() {
         if (AESRadioButton.isSelected()) {
@@ -482,17 +490,17 @@ public class FxController implements Initializable {
     private void decryptionButton() {
         String filePath = selectedFilePath;
         if (filePath == null || filePath.isEmpty()) {
-            encryptionStatusLabel.setText("No file selected.");
+            encryptionStatusLabel.setText("Niciun fisier selectat.");
             return;
         }
         File inputFile = new File(filePath);
         if (!inputFile.exists()) {
-            encryptionStatusLabel.setText("File not found.");
+            encryptionStatusLabel.setText("Fișierul nu a fost găsit.");
             return;
         }
         String password = parolaCheie.getText();
         if (password.isEmpty()) {
-            encryptionStatusLabel.setText("Password is required.");
+            encryptionStatusLabel.setText("Parola este necesara.");
             return;
         }
 
@@ -543,9 +551,9 @@ public class FxController implements Initializable {
                 File outputFile = fileChooser.showSaveDialog(new Stage());
                 if (outputFile != null) {
                     Files.write(outputFile.toPath(), decryptedBytes);
-                    encryptionStatusLabel.setText("Decryption completed. Decrypted file saved.");
+                    encryptionStatusLabel.setText("Decriptarea a fost finalizată. Fișier decriptat salvat.");
                 } else {
-                    encryptionStatusLabel.setText("Decryption canceled.");
+                    encryptionStatusLabel.setText("Decriptarea a fost anulată.");
                 }
             }
             else if (algorithm.equals("Blowfish")) {
@@ -578,9 +586,9 @@ public class FxController implements Initializable {
                 File outputFile = fileChooser.showSaveDialog(new Stage());
                 if (outputFile != null) {
                     Files.write(outputFile.toPath(), decryptedBytes);
-                    encryptionStatusLabel.setText("Decryption completed. Decrypted file saved.");
+                    encryptionStatusLabel.setText("Decriptarea a fost finalizată. Fișier decriptat salvat.");
                 } else {
-                    encryptionStatusLabel.setText("Decryption canceled.");
+                    encryptionStatusLabel.setText("Decriptarea a fost anulată.");
                 }
             }
             else if (algorithm.equals("CAST5")){
@@ -621,20 +629,31 @@ public class FxController implements Initializable {
                 File outputFile = fileChooser.showSaveDialog(new Stage());
                 if (outputFile != null) {
                     Files.write(outputFile.toPath(), decryptedBytes);
-                    encryptionStatusLabel.setText("Decryption completed. Decrypted file saved.");
+                    encryptionStatusLabel.setText("Decriptarea a fost finalizată. Fișier decriptat salvat.");
                 } else {
-                    encryptionStatusLabel.setText("Decryption canceled.");
+                    encryptionStatusLabel.setText("Decriptarea a fost anulată.");
                 }
             }
             else {
-                encryptionStatusLabel.setText("Please select an algorithm.");
+                encryptionStatusLabel.setText("Vă rugăm să selectați un algoritm.");
             }
 
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException | InvalidKeyException |
                  InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | IOException e) {
-            encryptionStatusLabel.setText("Decryption failed: " + e.getMessage());
+            encryptionStatusLabel.setText("Decriptarea a eșuat: " + e.getMessage());
         }
     }
+    @FXML
+    private void keyBasedEncryption(){
+        // to do
+    }
+
+    @FXML
+    private void keyBasedDecryption(){
+        // to do
+    }
+
+
     private String getOriginalFileExtension(String fileName) {
         int extensionIndex = fileName.lastIndexOf(".");
         return (extensionIndex != -1) ? fileName.substring(extensionIndex) : "";
@@ -672,9 +691,18 @@ public class FxController implements Initializable {
     private void switchVerifyAccountScene(ActionEvent event) throws IOException {
         switchScene("DataIntegrityVerifier.fxml", event);
     }
-    
+    @FXML
     private void switchCreateHashScene(ActionEvent event) throws IOException {
         switchScene("generateHashValueData.fxml", event);
     }
+    @FXML
+    private void switchKeyBasedEncryptionScene(ActionEvent event) throws IOException {
+        switchScene("keyEncryptScene.fxml", event);
+    }
+    @FXML
+    private void switchKeyBasedDecryptionScene(ActionEvent event) throws IOException {
+        switchScene("keyDecryptScene.fxml", event);
+    }
+
 
 }

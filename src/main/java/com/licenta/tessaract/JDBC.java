@@ -32,16 +32,18 @@ public class JDBC {
             return false;
         }
     }
-    protected static void closeConnection() {
+    protected static boolean closeConnection() {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
-             //   System.out.println("Database connection closed.");
+              System.out.println("Database connection closed.");
+              return true;
             }
         } catch (SQLException e) {
             // Handle the exception or log the error message
             e.printStackTrace();
         }
+        return false;
     }
 
     protected static String retrieveUserName(String email) {
