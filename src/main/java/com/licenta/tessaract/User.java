@@ -7,32 +7,32 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class User{
-    private final ArrayList<String> hashPasswords = new ArrayList<>();
-    private String userName;
-    private String emailAddress;
-    private String plainTextPassword;
-    private String hashPassword;
-
-    public User(String userName, String emailAddress, String plainTextPassword) {
-        if (isValidEmail(emailAddress)) {
-            this.emailAddress = emailAddress;
-        } else {
-            throw new IllegalArgumentException("Invalid email address");
-        }
-        if (validatePassword(plainTextPassword)) {
-            this.plainTextPassword = plainTextPassword;
-            // plain text password to be hashed
-            try {
-                this.hashPassword = hashPassword(plainTextPassword);
-                addHashPasswordToList();
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException("Unable to hash password", e);
-            }
-        } else {
-            throw new IllegalArgumentException("Invalid password");
-        }
-        this.userName = userName;
-    }
+//    private final ArrayList<String> hashPasswords = new ArrayList<>();
+//    private String userName;
+//    private String emailAddress;
+//    private String plainTextPassword;
+//    private String hashPassword;
+//
+//    public User(String userName, String emailAddress, String plainTextPassword) {
+//        if (isValidEmail(emailAddress)) {
+//            this.emailAddress = emailAddress;
+//        } else {
+//            throw new IllegalArgumentException("Invalid email address");
+//        }
+//        if (validatePassword(plainTextPassword)) {
+//            this.plainTextPassword = plainTextPassword;
+//            // plain text password to be hashed
+//            try {
+//                this.hashPassword = hashPassword(plainTextPassword);
+//                addHashPasswordToList();
+//            } catch (NoSuchAlgorithmException e) {
+//                throw new RuntimeException("Unable to hash password", e);
+//            }
+//        } else {
+//            throw new IllegalArgumentException("Invalid password");
+//        }
+//        this.userName = userName;
+//    }
 
     protected static boolean isValidEmail(String email) {
         if (email == null) {
@@ -66,9 +66,9 @@ public class User{
         return matcher.matches();
     }
 
-    private void addHashPasswordToList() {
-        hashPasswords.add(hashPassword);
-    }
+//    private void addHashPasswordToList() {
+//        hashPasswords.add(hashPassword);
+//    }
 
     protected static String hashPassword(String password) throws NoSuchAlgorithmException {
         if (password == null) {

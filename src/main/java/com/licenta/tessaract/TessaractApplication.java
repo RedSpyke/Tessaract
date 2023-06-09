@@ -22,9 +22,6 @@ public class TessaractApplication extends Application {
             // TO DO: Display error message in a new window, application cannot connect to database
         }
     }
-
-    // TO DO: Hash of encrypted files
-
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(TessaractApplication.class.getResource("StartApplicationScene.fxml"));

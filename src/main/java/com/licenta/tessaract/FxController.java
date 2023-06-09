@@ -324,11 +324,23 @@ public class FxController implements Initializable {
         }
         int keySize;
         String algorithm = getSelectedAlgorithm();
+        if(algorithm == null){
+            encryptionStatusLabel.setText("Algoritmul nu a fost selectat.");
+            return;
+        }
+
         if ("CAST5".equals(algorithm)) {
             keySize = 128;
             Security.addProvider(new BouncyCastleProvider());
         } else {
-            keySize = Integer.parseInt(comboBoxCheie.getValue());
+            String keySizeString = comboBoxCheie.getValue();
+            if(keySizeString == null){
+                encryptionStatusLabel.setText("Dimensiunea cheii nu a fost selectata.");
+                return;
+            } else {
+                keySize = Integer.parseInt(keySizeString);
+            }
+
         }
         try{
             if (algorithm.equals("AES")){
@@ -505,12 +517,25 @@ public class FxController implements Initializable {
         }
 
         int keySize;
+
         String algorithm = getSelectedAlgorithm();
+        if(algorithm == null) {
+            encryptionStatusLabel.setText("Vă rugăm să selectați un algoritm.");
+            return;
+        }
+
         if ("CAST5".equals(algorithm)) {
             keySize = 128;
             Security.addProvider(new BouncyCastleProvider());
         } else {
-            keySize = Integer.parseInt(comboBoxCheieDecriptare.getValue());
+            String keySizeString = comboBoxCheieDecriptare.getValue();
+         //   System.out.println(keySizeString);
+            if(keySizeString == null || keySizeString.isEmpty()) {
+                encryptionStatusLabel.setText("Vă rugăm să selectați o dimensiune a cheii.");
+                return;
+            } else {
+                keySize = Integer.parseInt(keySizeString);
+            }
         }
         try {
             if(algorithm.equals("AES")) {
