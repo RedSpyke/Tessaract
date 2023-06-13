@@ -136,7 +136,7 @@ public class FxController implements Initializable {
                 if(JDBC.authenticateUser(email, password)){
                     loginResultText.setText("Autentificare reusita!");
                     TessaractApplication.emailUtilizatorLogat = email;
-                    System.out.println("Email utilizator logat: " + TessaractApplication.emailUtilizatorLogat); // TO DO delete
+             //       System.out.println("Email utilizator logat: " + TessaractApplication.emailUtilizatorLogat); // TO DO delete
                     switchMainApplicationScene(event);
                 } else {
                     loginResultText.setText("Autentificare esuata!");
@@ -517,7 +517,6 @@ public class FxController implements Initializable {
         }
 
         int keySize;
-
         String algorithm = getSelectedAlgorithm();
         if(algorithm == null) {
             encryptionStatusLabel.setText("Vă rugăm să selectați un algoritm.");
@@ -683,7 +682,6 @@ public class FxController implements Initializable {
         int extensionIndex = fileName.lastIndexOf(".");
         return (extensionIndex != -1) ? fileName.substring(extensionIndex) : "";
     }
-
 
     private void switchScene(String fxmlFileName, ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(fxmlFileName)));
